@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "39473b41-fd56-4d05-9266-874426d4eaa1",
+		"name": "GitHub API Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25278663"
+	},
+	"item": [
+		{
+			"name": "Create Repo for authenticated user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Validate the status code on creating a new repo', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([",
+							"        201,",
+							"        202",
+							"    ]);",
+							"})",
+							"",
+							"pm.test('Validate the status code message', function () {",
+							"    pm.response.to.have.status('Created');",
+							"})",
+							"",
+							"pm.test('Validate the content-type in the header', function () {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');",
+							"})",
+							"",
+							"pm.test('Validate if the response has id key ', function () {",
+							"    pm.expect(pm.response.text()).to.include('id');",
+							"})",
+							"",
+							"const requestBody1 = pm.request.body;",
+							"console.log(requestBody1)",
+							"",
+							"const requestBody2 = JSON.parse(pm.request.body);",
+							"console.log(requestBody2.name)",
+							"",
+							"",
+							"const repo_name = pm.response.json().name;",
+							"pm.environment.set('repo_name', repo_name)",
+							"",
+							"const owner = pm.response.json().owner.login;",
+							"pm.environment.set('owner', owner)",
+							"",
+							"pm.test(\"Validate the request name\", function () {",
+							"    const repoName = requestBody2.name;",
+							"    pm.expect(repoName).to.eql(repo_name);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.github+json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "X-GitHub-Api-Version",
+						"value": "2022-11-28"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Hello-World{{$randomInt}}\",\n    \"description\": \"This is your first repo!{{$randomInt}}\",\n    \"homepage\": \"https://github.com\",\n    \"private\": false,\n    \"is_template\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/repos",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"repos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate the status code on get repo api call\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Validate the status code message\", function () {",
+							"    pm.response.to.have.status(\"OK\");",
+							"});",
+							"",
+							"pm.test(\"Validate the content-type in the header\", function () {",
+							"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');",
+							"});",
+							"",
+							"pm.test(\"Validate if the response has id key \", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"id\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.github+json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "X-GitHub-Api-Version",
+						"value": "2022-11-28"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/repos/{{owner}}/{{repo_name}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"repos",
+						"{{owner}}",
+						"{{repo_name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate the status code on get repo api call\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Validate the status code message\", function () {",
+							"    pm.response.to.have.status(\"OK\");",
+							"});",
+							"",
+							"pm.test(\"Validate the content-type in the header\", function () {",
+							"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');",
+							"});",
+							"",
+							"pm.test(\"Validate if the response has id key \", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"id\");",
+							"});",
+							"",
+							"pm.test(\"Validate if the description has been updated\", function () {",
+							"    pm.expect(pm.response.json().description).to.include(\"updated\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.github+json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "X-GitHub-Api-Version",
+						"value": "2022-11-28"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Hello-World\",\n    \"description\": \"This is your first repository updated\",\n    \"homepage\": \"https://github.com\",\n    \"private\": true,\n    \"has_issues\": true,\n    \"has_projects\": true,\n    \"has_wiki\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/repos/{{owner}}/{{repo_name}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"repos",
+						"{{owner}}",
+						"{{repo_name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate the status code on get repo api call\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"pm.test(\"Validate the status code message\", function () {",
+							"    pm.response.to.have.status(\"No Content\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.github+json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "X-GitHub-Api-Version",
+						"value": "2022-11-28"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/repos/{{owner}}/{{repo_name}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"repos",
+						"{{owner}}",
+						"{{repo_name}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
