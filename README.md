@@ -1,4 +1,4 @@
-# This project is created for practice purposes in learning how to automate APIs.
+# This project is created for practice purposes in learning how to automate APIs using Postman, newman as collection runner and jenkins to run on local machine.
 
 https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#create-an-organization-repository
 
